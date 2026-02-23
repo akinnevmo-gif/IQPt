@@ -19,6 +19,25 @@ function login() {
     }
 }
 
+// EXAM COUNTDOWN (SET YOUR REAL WAEC DATE HERE)
+const examDate = new Date("June 1, 2026 09:00:00").getTime();
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const distance = examDate - now;
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+    const countdownElement = document.getElementById("countdown");
+    if (countdownElement) {
+        countdownElement.innerText = `WAEC starts in ${days} days ${hours} hours`;
+    }
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
 // SUBJECT QUESTIONS
 const subjects = {
     math: [
@@ -34,6 +53,7 @@ const subjects = {
 let currentQuestions = [];
 let currentIndex = 0;
 let score = 0;
+let questionTimer;
 
 function startQuiz(subject) {
     currentQuestions = subjects[subject];
@@ -43,6 +63,18 @@ function startQuiz(subject) {
 }
 
 function loadQuestion() {
+    clearInterval(questionTimer);
+    let timeLeft = 15;
+    document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
+
+    questionTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = `Time: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+            nextQuestion();
+        }
+    }, 1000);
+
     const q = currentQuestions[currentIndex];
     document.getElementById("question").innerText = q.question;
     const optionsDiv = document.getElementById("options");
@@ -68,6 +100,7 @@ function nextQuestion() {
     if (currentIndex < currentQuestions.length) {
         loadQuestion();
     } else {
+        clearInterval(questionTimer);
         document.getElementById("question").innerText = "Quiz Completed!";
         document.getElementById("options").innerHTML = "";
         document.getElementById("score").innerText = "Score: " + score;
