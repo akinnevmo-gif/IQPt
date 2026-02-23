@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IQ Point - WASSCE AI Tutor</title>
+  <link rel="stylesheet" href="/styles/style.css">
+</head>
+<body>
+  <header>
+    <h1>IQ Point</h1>
+    <p>Your AI WASSCE Study Assistant</p>
+  </header>
+
+  <main>
+    <div class="chat-container">
+      <div id="chat-box" class="chat-box"></div>
+      <input id="user-input" placeholder="Ask a question..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div class="extras">
+      <a href="https://chat.whatsapp.com/JaTMhWxIBM0EY5out6HWLB?mode=gi_t" target="_blank">
+        Join our WhatsApp Study Group
+      </a>
+    </div>
+  </main>
+
+  <script>
+    async function sendMessage() {
+      const inputEl = document.getElementById('user-input');
+      const chatBox = document.getElementById('chat-box');
+      const userMessage = inputEl.value.trim();
+      if(!userMessage) return;
+      
+      chatBox.innerHTML += `<p class="user"><b>You:</b> ${userMessage}</p>`;
+      inputEl.value = '';
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({message: userMessage})
+      });
+
+      const data = await res.json();
+      chatBox.innerHTML += `<p class="ai"><b>IQ Point:</b> ${data.reply}</p>`;
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  </script>
+</body>
+</html>
